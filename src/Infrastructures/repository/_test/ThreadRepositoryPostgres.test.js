@@ -131,6 +131,15 @@ describe('ThreadRepositoryPostgres', () => {
         owner: 'user-123',
         date,
       });
+
+      expectedThread = {
+        id: 'thread-123',
+        title: 'This is a title',
+        body: 'This is a body',
+        date,
+        username: 'ardanngrha',
+      };
+
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool);
 
       // Action
@@ -139,11 +148,7 @@ describe('ThreadRepositoryPostgres', () => {
       );
 
       // Assert
-      expect(threadDetails).toHaveProperty('id', 'thread-123');
-      expect(threadDetails).toHaveProperty('title', 'This is a title');
-      expect(threadDetails).toHaveProperty('body', 'This is a body');
-      expect(threadDetails).toHaveProperty('date', date);
-      expect(threadDetails).toHaveProperty('username', 'ardanngrha');
+      expect(threadDetails).toStrictEqual(expectedThread);
     });
   });
 });
