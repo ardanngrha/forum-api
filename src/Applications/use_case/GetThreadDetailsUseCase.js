@@ -34,7 +34,7 @@ class GetThreadDetailsUseCase {
       delete reply.is_delete;
     });
 
-    const commentsRepliesById = threadComments.map((data) => {
+    const commentsRepliesById = await Promise.all(threadComments.map(async (data) => {
       const replies = threadReplies
         .filter((reply) => reply.comment_id === data.id)
         .map(
@@ -46,11 +46,14 @@ class GetThreadDetailsUseCase {
           }),
         );
 
+      const likeCount = await this._commentRepository.getLikeCount(data.id);
+
       return new CommentDetails({
         ...data,
+        likeCount,
         replies,
       });
-    });
+    }));
 
     return new ThreadDetails({
       ...thread,

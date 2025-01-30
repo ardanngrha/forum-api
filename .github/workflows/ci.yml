@@ -25,7 +25,7 @@ jobs:
         npm install
         npm run migrate up
         npm run test
-      env:
+    env:
         CI: true
         PGHOST_TEST: ${{ secrets.PGHOST_TEST }}
         PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
