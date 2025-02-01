@@ -23,19 +23,6 @@ const LikeCommentsTableTestHelper = {
     const result = await pool.query(query);
     return result.rows;
   },
-
-  async deleteLikeComment({ commentId, owner }) {
-    const query = {
-      text: 'DELETE FROM like_comments WHERE comment_id = $1 AND owner = $2',
-      values: [commentId, owner],
-    };
-
-    await pool.query(query);
-  },
-
-  async cleanTable() {
-    await pool.query('DELETE FROM like_comments WHERE 1=1');
-  },
 };
 
 module.exports = LikeCommentsTableTestHelper;

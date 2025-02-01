@@ -34,6 +34,7 @@ describe('GetThreadDetailsUseCase', () => {
             }),
           ],
           content: 'This is a comment',
+          likeCount: 0,
         }),
         new CommentDetails({
           id: 'comment-456',
@@ -48,6 +49,7 @@ describe('GetThreadDetailsUseCase', () => {
             }),
           ],
           content: '**komentar telah dihapus**',
+          likeCount: 0,
         }),
       ],
     });
@@ -56,6 +58,8 @@ describe('GetThreadDetailsUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
     const mockReplyRepository = new ReplyRepository();
+
+    mockCommentRepository.getLikeCount = jest.fn().mockImplementation(() => Promise.resolve(0));
 
     /** mocking needed function */
     mockThreadRepository.isThreadExist = jest
@@ -125,5 +129,6 @@ describe('GetThreadDetailsUseCase', () => {
       useCaseThreadId,
     );
     expect(mockThreadRepository.getThreadById).toBeCalledWith(useCaseThreadId);
+    expect(mockCommentRepository.getLikeCount).toBeCalledTimes(2);
   });
 });

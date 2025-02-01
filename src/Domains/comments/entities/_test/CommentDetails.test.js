@@ -24,6 +24,7 @@ describe('a CommentDetails entities', () => {
       date: '2021-08-08T07:22:33.555Z',
       replies: [],
       content: {},
+      likeCount: '0',
     };
 
     // Action and Assert
@@ -40,6 +41,7 @@ describe('a CommentDetails entities', () => {
       date: '2021-08-08T07:22:33.555Z',
       replies: [],
       content: 'This is a comment',
+      likeCount: 0,
     };
 
     // Action
@@ -51,5 +53,19 @@ describe('a CommentDetails entities', () => {
     expect(comment.date).toEqual(payload.date);
     expect(comment.content).toEqual(payload.content);
     expect(comment.replies).toEqual(payload.replies);
+    expect(comment.likeCount).toEqual(payload.likeCount);
+  });
+
+  it('should create commentDetails with default likeCount when not provided', () => {
+    const payload = {
+      id: 'thread-123',
+      username: 'user-123',
+      date: '2021-08-08T07:22:33.555Z',
+      replies: [],
+      content: 'This is a comment',
+    };
+
+    const comment = new CommentDetails(payload);
+    expect(comment.likeCount).toEqual(0);
   });
 });
