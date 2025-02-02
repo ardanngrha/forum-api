@@ -433,4 +433,147 @@ describe('/comments endpoint', () => {
       expect(responseJson.message).toEqual('Komentar tidak ditemukan!');
     });
   });
+
+  describe('when PUT /threads/{threadId}/comments/{commentId}/likes', () => {
+    it('should response 200 and like comment', async () => {
+      // Arrange
+      const server = await createServer(container);
+      const registeredUser = await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: {
+          username: 'adanngrha',
+          password: 'secret',
+          fullname: 'Adan Nugraha',
+        },
+      });
+
+      const requestAuth = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: {
+          username: 'adanngrha',
+          password: 'secret',
+        },
+      });
+
+      const requestAuthJSON = JSON.parse(requestAuth.payload);
+      const { data: { addedUser: { id } } } = JSON.parse(registeredUser.payload);
+      await ThreadsTableTestHelper.addThread({ owner: id });
+      await CommentsTableTestHelper.addComment({ owner: id });
+
+      // Action
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/threads/thread-123/comments/comment-123/likes',
+        headers: {
+          Authorization: `Bearer ${requestAuthJSON.data.accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+
+    it('should response 401 when user not login', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/threads/thread-123/comments/comment-123/likes',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(401);
+      expect(responseJson.error).toEqual('Unauthorized');
+      expect(responseJson.message).toEqual('Missing authentication');
+    });
+
+    it('should response 404 when thread not found', async () => {
+      // Arrange
+      const server = await createServer(container);
+      const registeredUser = await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: {
+          username: 'adanngrha',
+          password: 'secret',
+          fullname: 'Adan Nugraha',
+        },
+      });
+
+      const requestAuth = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: {
+          username: 'adanngrha',
+          password: 'secret',
+        },
+      });
+
+      const requestAuthJSON = JSON.parse(requestAuth.payload);
+
+      // Action
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/threads/thread-123/comments/comment-123/likes',
+        headers: {
+          Authorization: `Bearer ${requestAuthJSON.data.accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('Thread tidak ditemukan!');
+    });
+
+    it('should response 404 when comment not found', async () => {
+      // Arrange
+      const server = await createServer(container);
+      const registeredUser = await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: {
+          username: 'adanngrha',
+          password: 'secret',
+          fullname: 'Adan Nugraha',
+        },
+      });
+
+      const requestAuth = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: {
+          username: 'adanngrha',
+          password: 'secret',
+        },
+      });
+
+      const requestAuthJSON = JSON.parse(requestAuth.payload);
+      const { data: { addedUser: { id } } } = JSON.parse(registeredUser.payload);
+      await ThreadsTableTestHelper.addThread({ owner: id });
+
+      // Action
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/threads/thread-123/comments/comment-123/likes',
+        headers: {
+          Authorization: `Bearer ${requestAuthJSON.data.accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('Komentar tidak ditemukan!');
+    });
+  });
 });
