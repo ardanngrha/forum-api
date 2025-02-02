@@ -1,7 +1,0 @@
-{
-  "PGHOST_TEST": "localhost",
-  "PGUSER_TEST": "ardan",
-  "PGDATABASE_TEST": "forum_test",
-  "PGPASSWORD_TEST": "seincrow",
-  "PGPORT_TEST": "5432"
-}
